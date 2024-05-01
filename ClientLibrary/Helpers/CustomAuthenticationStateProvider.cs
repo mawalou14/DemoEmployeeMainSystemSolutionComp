@@ -16,7 +16,7 @@ namespace ClientLibrary.Helpers
             var deserializeToken = Serializations.DeserializeJsonString<UserSession>(stringToken);
             if (deserializeToken == null) return await Task.FromResult(new AuthenticationState(anonymous));
 
-            var getUserClaims = DescryptToken(deserializeToken.Token!);
+            var getUserClaims = DecryptToken(deserializeToken.Token!);
             if (getUserClaims == null) return await Task.FromResult(new AuthenticationState(anonymous));
 
             var claimsPrincipal = SetClaimPrincipal(getUserClaims);
@@ -34,6 +34,20 @@ namespace ClientLibrary.Helpers
             var email = token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email);
             var role = token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role);
             return new CustomUserClaims(userId!.Value, name!.Value, email!.Value, role!.Value);
+        }
+
+        public static ClaimsPrincipal SetClaimPrincipal(CustomUserClaims claims)
+        {
+            if (claims.Email is null) return new ClaimsPrincipal();
+
+            return new ClaimsPrincipal(new ClaimsIdentity(
+                   new List<Claim>
+                   {
+                       new(ClaimTypes.NameIdentifier, claims.Id!),
+                       new(ClaimTypes.Name, claims.Name!),
+                       new(ClaimTypes.Email, claims.Email!),
+                       new(ClaimTypes.Role, claims.Role!)
+                   }, "JwtAuth"));
         }
     }
 }
