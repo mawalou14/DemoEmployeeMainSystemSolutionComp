@@ -1,5 +1,6 @@
 ﻿using BaseLibary.DTOs;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ServerLibrary.Repositories.Contracts;
 
@@ -16,5 +17,14 @@ namespace Server.Controllers
             var result = await accountInterface.CreateAsync(user);
             return Ok(result);
         }
+        [HttpPost("login")]
+        public async Task<IActionResult> SignInAsync(Login user)
+        {
+            if (user is null) return BadRequest("Model is empty");
+            var result = await accountInterface.SignInAsync(user);
+            return Ok(result);
+        }
+
     }
+
 }
