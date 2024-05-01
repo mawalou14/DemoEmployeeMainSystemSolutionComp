@@ -62,10 +62,10 @@ namespace ServerLibrary.Repositories.Implementations
                 return new LoginResponse(false, "Email/Password not valid");
 
             //Get the user'a role
-            var getUserRole = await appDbContext.UserRoles.FirstOrDefaultAsync(x => x.UserId == applicationUser.Id);
+            var getUserRole = await FindUserRole(applicationUser.Id);
             if (getUserRole is null) return new LoginResponse(false, "User role not found1");
 
-            var getRoleName = await appDbContext.SystemRoles.FirstOrDefaultAsync(x => x.Id == getUserRole.RoleId);
+            var getRoleName = await FindRoleName(getUserRole.RoleId);
             if (getRoleName is null) return new LoginResponse(false, "User role name not found");
 
             string jwtToken = GenerateToken(applicationUser, getRoleName!.Name!);
@@ -73,8 +73,16 @@ namespace ServerLibrary.Repositories.Implementations
             return new LoginResponse(true, "Login successfullt", jwtToken, refreshToken);
         }
 
+        private async Task<UserRole> FindUserRole(Guid userId) =>
+            await appDbContext.UserRoles.FirstOrDefaultAsync(x => x.UserId == userId);
+
+        private async Task<SystemRole> FindRoleName(Guid roleId) =>
+            await appDbContext.SystemRoles.FirstOrDefaultAsync(x => x.Id == roleId);
+
         private async Task<ApplicationUser> FindUserByEmail(string email) => 
             await appDbContext.ApplicationUsers.FirstOrDefaultAsync(x => x.Email!.ToLower().Equals(email!.ToLower()));
+
+        private static string GenerateRefreshToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
         private async Task<T> AddToDatabase<T>(T model)
         {
@@ -109,6 +117,9 @@ namespace ServerLibrary.Repositories.Implementations
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private static string GenerateRefreshToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        public Task<LoginResponse> RefreshTokenAsync(RefreshToken token)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
