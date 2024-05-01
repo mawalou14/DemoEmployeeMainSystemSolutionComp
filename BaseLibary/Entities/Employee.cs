@@ -21,12 +21,12 @@ namespace BaseLibary.Entities
 
         //Relationship : Many To One
         public GeneralDepartment? GeneralDepartment { get; set; }
-        public int GeneralDepartmentId { get; set; }
+        public Guid GeneralDepartmentId { get; set; }
         public Department? Department { get; set; }
-        public int DepartmentId { get; set; }
+        public Guid DepartmentId { get; set; }
         public Branch? Branch { get; set; }
-        public int? BranchId { get; set; }
+        public Guid? BranchId { get; set; }
         public Town? Town { get; set; }
-        public int? TownId { get;set; }
+        public Guid? TownId { get;set; }
     }
 }
