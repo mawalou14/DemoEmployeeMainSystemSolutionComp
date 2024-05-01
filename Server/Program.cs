@@ -47,6 +47,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowBlazorWasm");
+
 app.UseAuthorization();
 
 app.MapControllers();
