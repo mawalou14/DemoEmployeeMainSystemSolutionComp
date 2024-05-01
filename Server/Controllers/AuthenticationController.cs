@@ -17,6 +17,7 @@ namespace Server.Controllers
             var result = await accountInterface.CreateAsync(user);
             return Ok(result);
         }
+
         [HttpPost("login")]
         public async Task<IActionResult> SignInAsync(Login user)
         {

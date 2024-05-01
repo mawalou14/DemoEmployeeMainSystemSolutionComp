@@ -28,11 +28,12 @@ namespace ServerLibrary.Repositories.Implementations
                 Email = user.Email,
                 Password = BCrypt.Net.BCrypt.HashPassword(user.Password)
             });
-            //Check, create ans asign role
+            //Check, create and asign role
             var checkAdminRole = await appDbContext.SystemRoles.FirstOrDefaultAsync(x => x.Name!.Equals(Constants.Admin));
             if (checkAdminRole is null)
             {
-                var createAdminRole = await AddToDatabase(new SystemRole() { Name = Helpers.Constants.Admin });
+                var createAdminRole = await AddToDatabase(new SystemRole() { Name = Constants.Admin });
+                await AddToDatabase(new UserRole() { RoleId = createAdminRole.Id, UserId = applicationUser.Id });
                 return new GeneralResponse(true, "Account Created");
             }
 
@@ -62,10 +63,10 @@ namespace ServerLibrary.Repositories.Implementations
 
             //Get the user'a role
             var getUserRole = await appDbContext.UserRoles.FirstOrDefaultAsync(x => x.UserId == applicationUser.Id);
-            if (getUserRole is null) return new LoginResponse(false, "User role not found");
+            if (getUserRole is null) return new LoginResponse(false, "User role not found1");
 
             var getRoleName = await appDbContext.SystemRoles.FirstOrDefaultAsync(x => x.Id == getUserRole.RoleId);
-            if (getUserRole == null) return new LoginResponse(false, "User role not found");
+            if (getRoleName is null) return new LoginResponse(false, "User role name not found");
 
             string jwtToken = GenerateToken(applicationUser, getRoleName!.Name!);
             string refreshToken = GenerateRefreshToken();
@@ -84,7 +85,11 @@ namespace ServerLibrary.Repositories.Implementations
 
         private string GenerateToken(ApplicationUser user, string role)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.Value.Key!));
+            if (config.Value.Key == null)
+            {
+                throw new Exception("JWT secret key is not configured.");
+            }
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.Value.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var userClaims = new[]
             {
@@ -93,7 +98,7 @@ namespace ServerLibrary.Repositories.Implementations
                 new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(ClaimTypes.Role, role!)
             };
-            var Token = new JwtSecurityToken(
+            var token = new JwtSecurityToken(
                 issuer: config.Value.Issuer,
                 audience: config.Value.Audience,
                 claims: userClaims,
@@ -101,7 +106,7 @@ namespace ServerLibrary.Repositories.Implementations
                 signingCredentials: credentials
                 );
 
-            return new JwtSecurityTokenHandler().WriteToken(Token);
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         private static string GenerateRefreshToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
