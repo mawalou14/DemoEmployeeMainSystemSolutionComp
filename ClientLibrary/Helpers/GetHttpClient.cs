@@ -1,0 +1,22 @@
+﻿using BaseLibary.DTOs;
+
+namespace ClientLibrary.Helpers
+{
+    public class GetHttpClient(IHttpClientFactory httpClientFactory, LocalStorageService localStorageService)
+    {
+        private const string HeaderKey = "Authorization";
+
+        public async Task<HttpClient> GetPtivateHttpClient()
+        {
+            var client = httpClientFactory.CreateClient("SystemApiClient");
+            var stringToken = await localStorageService.GetToken();
+            if (string.IsNullOrEmpty(stringToken)) return client;
+
+            var deserializationToken = Serializations.DeserializeJsonString<UserSession>(stringToken);
+            if (deserializationToken == null) return client;
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", deserializationToken.Token);
+            return client;
+        }
+    }
+}
