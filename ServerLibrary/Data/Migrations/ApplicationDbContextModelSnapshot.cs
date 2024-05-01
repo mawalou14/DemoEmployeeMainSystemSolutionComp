@@ -31,7 +31,7 @@ namespace ServerLibrary.Data.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FullName")
                         .HasColumnType("text");
 
                     b.Property<string>("Password")

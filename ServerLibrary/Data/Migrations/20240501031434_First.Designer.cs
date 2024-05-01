@@ -12,7 +12,7 @@ using ServerLibrary.Data;
 namespace ServerLibrary.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240501021018_First")]
+    [Migration("20240501031434_First")]
     partial class First
     {
         /// <inheritdoc />
@@ -34,7 +34,7 @@ namespace ServerLibrary.Data.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FullName")
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
