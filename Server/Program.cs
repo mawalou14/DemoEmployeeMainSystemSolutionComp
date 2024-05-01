@@ -24,7 +24,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.ApplyMigrations();
+    //For Automatic Migrations use the below
+    //app.ApplyMigrations();
 }
 
 app.UseHttpsRedirection();
