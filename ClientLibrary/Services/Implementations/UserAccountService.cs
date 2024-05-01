@@ -9,7 +9,7 @@ namespace ClientLibrary.Services.Implementations
 {
     public class UserAccountService(GetHttpClient getHttpClient) : IUserAccountService
     {
-        public const string AuthUrl = "api/authentication";
+        public const string AuthUrl = "api/Authentication";
         public async Task<GeneralResponse> CreateAsync(Register user)
         {
             var httpClient = getHttpClient.GetPublicHttpClient();
@@ -36,7 +36,7 @@ namespace ClientLibrary.Services.Implementations
         public async Task<WeatherForecast[]> GetWeatherForecast()
         {
             var httClient = getHttpClient.GetPublicHttpClient();
-            var result = await httClient.GetFromJsonAsync<WeatherForecast[]>("api/weatherforecast");
+            var result = await httClient.GetFromJsonAsync<WeatherForecast[]>("api/Weatherforecast");
             return result;
         }
               
