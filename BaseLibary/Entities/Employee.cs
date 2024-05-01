@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace BaseLibary.Entities
 {
-    public class Employee : BaseEntity
+    public class Employee
     {
+        public int Id { get; set; }
+        public string? Name { get; set; }
         public string? CivilId { get; set; }
         public string? FileNumber { get; set; }
         public string? FullName { get; set; }
